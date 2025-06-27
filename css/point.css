@@ -61,7 +61,10 @@ a {
     display: block; 
 }
 
-
+#access {
+  padding-left: 15px;
+  border-left: solid 10px rgb(0, 19, 70);
+}
 
 th {
   border: solid 1px;
