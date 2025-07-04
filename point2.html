@@ -16,9 +16,21 @@
           <a href="./genre.html">寺・神社</a>
         </li>
       </ul>
-    <div class='container'>
-      <img 
-      src="./img/kiyomizu1.jpg" alt="清水寺">
+    <div class='spot-slider'>
+      <section class="spots">
+        <a class="spot-card">
+          <img src="./img/kiyomizu1.jpg" alt="清水寺">
+        </a>
+        <a class="spot-card"> 
+          <img src="./img/kiyomizu2.jpg" alt="清水寺">
+        </a>
+        <a class="spot-card"> 
+          <img src="./img/koyomizu3.jpg" alt="清水寺">
+        </a>
+        <a class="spot-card"> 
+          <img src="./img/kiyomizu2.jpg" alt="清水寺">
+        </a>
+      </section>
     </div>
     
     <h2 class="imgstyl">清水寺の魅力</h2>
@@ -59,5 +71,43 @@
         src="./img/koyomizu3.jpg" alt="写真">
       </div>
     </div>
+    <script>
+window.addEventListener('load', () => {
+  const spots      = document.querySelector('.spots');
+  const cards      = spots.children;       // HTMLCollection
+  const CARD_W     = 280;                  // カード幅
+  const GAP        = 40;                   // カード間隔
+  const STEP       = CARD_W + GAP + 20;         // 1マス分
+  const DURATION   = 3000;                 // 3秒ごと
+  const TRANS_T    = 0.8;                  // 0.8s（CSS の transition と合わせる）
+
+  let isAnimating = false;
+
+  // ３秒ごとにスクロールスタート
+  setInterval(() => {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    // margin-left を -STEP にして「ぬるり」
+    spots.style.marginLeft = `-${STEP}px`;
+    // transition は CSS 側で .8s ease 指定済み
+  }, DURATION);
+
+  // トランジションが終わったら呼ばれる
+  spots.addEventListener('transitionend', () => {
+    // 先頭要素を末尾に移動
+    spots.appendChild(cards[0]);
+    // トランジションをいったんオフ
+    spots.style.transition = 'none';
+    // margin-left をリセット（見た目はずっと同じ）
+    spots.style.marginLeft = '0';
+    // 強制リフロー
+    void spots.offsetHeight;
+    // トランジションを戻す
+    spots.style.transition = `margin-left ${TRANS_T}s ease`;
+    isAnimating = false;
+  });
+});
+</script>
   </body>
 </html>
