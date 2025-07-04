@@ -36,5 +36,56 @@
         </a>
       </section> 
     </main> 
+  <script>
+window.addEventListener('load', () => {
+  const container = document.querySelector('.spots');
+  const cards = Array.from(container.querySelectorAll('.spot-card'));
+
+  // ■ 初期レイアウト時のコンテナ高さをキープ
+  const containerH = container.clientHeight;
+  container.style.height = containerH + 'px';
+
+  // ■ 各種値
+  const gap     = 40;                        // セル間隔
+  const cardW   = cards[0].offsetWidth;     // カード幅（280px）
+  const step    = cardW + gap;              // 動かす距離（320px）
+  const N       = cards.length;             // 3
+  const positions = new Array(N);
+
+  // ■ 初期配置：offsetLeft/offsetTop を拾ってから絶対配置に切り替え
+  cards.forEach((card, i) => {
+    const x = card.offsetLeft;
+    const y = card.offsetTop;
+    positions[i] = x;
+    card.style.position = 'absolute';
+    card.style.left     = x + 'px';
+    card.style.top      = y + 'px';
+    // (transition は CSS 側で left .8s ease を指定済み)
+  });
+
+  // ■ 3秒ごとに１セル分ずつ左へスライド
+  setInterval(() => {
+    cards.forEach((card, i) => {
+      positions[i] -= step;
+      card.style.left = positions[i] + 'px';
+
+      // 「完全に左端を出た」ら、transitionend で右端へワープ
+      if (positions[i] < -cardW) {
+        const onEnd = () => {
+          card.removeEventListener('transitionend', onEnd);
+
+          // トランジションをオフ → 右端へ移動 → reflow → トランジションを戻す
+          card.style.transition = 'none';
+          positions[i] += step * N;            // 320*3 = 960px 後ろへ下がる
+          card.style.left = positions[i] + 'px';
+          card.offsetHeight;                   // 強制 reflow
+          card.style.transition = 'left 0.8s ease';
+        };
+        card.addEventListener('transitionend', onEnd);
+      }
+    });
+  }, 3000);
+});
+</script>
   </body> 
 </html>
