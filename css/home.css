@@ -34,8 +34,9 @@ nav ul li a:hover { background: #f0f0f0; }
 /* メインのカード列 */ 
 .spots {
   display: flex;
-  gap: 40px;            /* ← カード間隔 */
-  padding: 20px;        /* もともとの余白を残す */
+  gap: 150px;            /* ← カード間隔 */
+  padding-left: 60px;
+  padding-top: 20px;
   margin: 0;            /* JS でマージン操作するので念のため */
   transition: margin-left 0.8s ease;  /* ← ぬるりアニメ用 */
 }
