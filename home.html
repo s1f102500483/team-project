@@ -21,70 +21,59 @@
       </nav> 
     </header> 
     <main> 
-      <section class="spots"> 
-        <a href="./point1.html" class="spot-card"> 
-          <img src="images/spot1.jpg" alt="観光地1"> 
-          <div class="spot-label">白川郷</div> 
-        </a>  
-        <a href="./point2.html" class="spot-card"> 
-          <img src="./img/kiyomizu1.jpg" alt="観光地2">
-          <div class="spot-label">清水寺</div> 
-        </a> 
-        <a href="./point3.html" class="spot-card">
-          <img src="images/spot3.jpg" alt="観光地3"> 
-          <div class="spot-label">函館山</div>
-        </a>
-      </section> 
+      <div class="spot-slider">
+        <section class="spots"> 
+          <a href="./point1.html" class="spot-card"> 
+            <img src="images/spot1.jpg" alt="観光地1"> 
+            <div class="spot-label">白川郷</div> 
+          </a>  
+          <a href="./point2.html" class="spot-card"> 
+            <img src="./img/kiyomizu1.jpg" alt="観光地2">
+            <div class="spot-label">清水寺</div> 
+          </a> 
+          <a href="./point3.html" class="spot-card">
+            <img src="images/spot3.jpg" alt="観光地3"> 
+            <div class="spot-label">函館山</div>
+          </a>
+        </section> 
+      </div>
     </main> 
-  <script>
+<script>
 window.addEventListener('load', () => {
-  const container = document.querySelector('.spots');
-  const cards = Array.from(container.querySelectorAll('.spot-card'));
+  const spots      = document.querySelector('.spots');
+  const cards      = spots.children;       // HTMLCollection
+  const CARD_W     = 280;                  // カード幅
+  const GAP        = 50;                   // カード間隔
+  const STEP       = CARD_W + GAP;         // 1マス分
+  const DURATION   = 3000;                 // 3秒ごと
+  const TRANS_T    = 0.8;                  // 0.8s（CSS の transition と合わせる）
 
-  // ■ 初期レイアウト時のコンテナ高さをキープ
-  const containerH = container.clientHeight;
-  container.style.height = containerH + 'px';
+  let isAnimating = false;
 
-  // ■ 各種値
-  const gap     = 40;                        // セル間隔
-  const cardW   = cards[0].offsetWidth;     // カード幅（280px）
-  const step    = cardW + gap;              // 動かす距離（320px）
-  const N       = cards.length;             // 3
-  const positions = new Array(N);
-
-  // ■ 初期配置：offsetLeft/offsetTop を拾ってから絶対配置に切り替え
-  cards.forEach((card, i) => {
-    const x = card.offsetLeft;
-    const y = card.offsetTop;
-    positions[i] = x;
-    card.style.position = 'absolute';
-    card.style.left     = x + 'px';
-    card.style.top      = y + 'px';
-    // (transition は CSS 側で left .8s ease を指定済み)
-  });
-
-  // ■ 3秒ごとに１セル分ずつ左へスライド
+  // ３秒ごとにスクロールスタート
   setInterval(() => {
-    cards.forEach((card, i) => {
-      positions[i] -= step;
-      card.style.left = positions[i] + 'px';
+    if (isAnimating) return;
+    isAnimating = true;
 
-      // 「完全に左端を出た」ら、transitionend で右端へワープ
-      if (positions[i] < -cardW) {
-        const onEnd = () => {
-          card.removeEventListener('transitionend', onEnd);
+    // margin-left を -STEP にして「ぬるり」
+    spots.style.marginLeft = `-${STEP}px`;
+    // transition は CSS 側で .8s ease 指定済み
+  }, DURATION);
 
-          // トランジションをオフ → 右端へ移動 → reflow → トランジションを戻す
-          card.style.transition = 'none';
-          positions[i] += step * N;            // 320*3 = 960px 後ろへ下がる
-          card.style.left = positions[i] + 'px';
-          card.offsetHeight;                   // 強制 reflow
-          card.style.transition = 'left 0.8s ease';
-        };
-        card.addEventListener('transitionend', onEnd);
-      }
-    });
-  }, 3000);
+  // トランジションが終わったら呼ばれる
+  spots.addEventListener('transitionend', () => {
+    // 先頭要素を末尾に移動
+    spots.appendChild(cards[0]);
+    // トランジションをいったんオフ
+    spots.style.transition = 'none';
+    // margin-left をリセット（見た目はずっと同じ）
+    spots.style.marginLeft = '0';
+    // 強制リフロー
+    void spots.offsetHeight;
+    // トランジションを戻す
+    spots.style.transition = `margin-left ${TRANS_T}s ease`;
+    isAnimating = false;
+  });
 });
 </script>
   </body> 
