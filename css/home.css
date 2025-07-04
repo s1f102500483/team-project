@@ -33,19 +33,23 @@ nav ul li a {
 nav ul li a:hover { background: #f0f0f0; } 
 /* メインのカード列 */ 
 .spots {
-  position: relative;
-  height: 300px;    /* カード高さに合わせて調整 */
-  width: 300px;
-  overflow: hidden;
-  padding: 0;
-  display:flex; 
-  justify-content:space-around; 
-  flex-wrap:wrap; gap:40px; 
+  display: flex;
+  gap: 40px;            /* ← カード間隔 */
+  padding: 20px;        /* もともとの余白を残す */
+  margin: 0;            /* JS でマージン操作するので念のため */
+  transition: margin-left 0.8s ease;  /* ← ぬるりアニメ用 */
 }
 
 .spot-card {
-  /* ここでスライドのアニメーション時間を指定 */
-  transition: transform 0.8s ease;
+  flex: 0 0 280px;      /* 幅 280px, 高さは img の object-fit に任せる */
+  height: 280px;
+  overflow: hidden;
+  border: 1px solid #666;
+  position: relative;   /* ラベル用の絶対配置だけ効かせる */
+}
+
+.spot-slider {
+  overflow: hidden;
 }
 
 .spot-card:hover { 
